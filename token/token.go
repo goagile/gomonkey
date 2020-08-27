@@ -1,6 +1,6 @@
 package token
 
-type TokenType int
+type TokenType string
 
 type Token struct {
 	Type TokenType
@@ -8,7 +8,7 @@ type Token struct {
 }
 
 const (
-	
+
 	ILLEGAL = "ILLEGAL"
 	EOF = "EOF"
 
