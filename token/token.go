@@ -1,12 +1,5 @@
 package token
 
-type TokenType string
-
-type Token struct {
-	Type TokenType
-	Literal string
-}
-
 const (
 
 	ILLEGAL = "ILLEGAL"
@@ -17,6 +10,11 @@ const (
 
 	ASSIGN = "="
 	PLUS = "+"
+	MINUS = "-"
+	ASTERISK = "*"
+	SLASH = "/"
+	LT = "<"
+	GT = ">"
 
 	COMMA = ","
 	SEMICOLON = ";"
@@ -30,3 +28,10 @@ const (
 	LET = "LET"
 
 )
+
+type TokenType string
+
+type Token struct {
+	Type TokenType
+	Literal string
+}

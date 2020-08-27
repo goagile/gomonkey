@@ -7,18 +7,23 @@ import (
 
 func Test_NextToken(t *testing.T) {
 	wants := []*token.Token{
-		{token.ASSIGN, "="},
-		{token.PLUS,   "+"},
-		{token.LPAREN, "("},
-		{token.RPAREN, ")"},
-		{token.LBRACE, "{"},
-		{token.RBRACE, "}"},
-		{token.COMMA, ","},
-		{token.SEMICOLON, ";"},
-		{token.EOF,   ""},
+		{token.ASSIGN,   "="},
+		{token.PLUS,     "+"},
+		{token.MINUS,    "-"},
+		{token.ASTERISK, "*"},
+		{token.SLASH, 	 "/"},
+		{token.LT,       "<"},
+		{token.GT,       ">"},
+		{token.LPAREN,   "("},
+		{token.RPAREN,   ")"},
+		{token.LBRACE,   "{"},
+		{token.RBRACE,   "}"},
+		{token.COMMA,    ","},
+		{token.SEMICOLON,";"},
+		{token.EOF,      ""},
 	}
 
-	lex := New("=+(){},;")
+	lex := New("=+-*/<>(){},;")
 
 	for i, want := range wants {
 		got := lex.NextToken()

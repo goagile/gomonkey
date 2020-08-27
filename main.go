@@ -7,7 +7,7 @@ import (
 
 func main() {
 
-	t := &token.Token{0, "+"}
+	t := &token.Token{token.PLUS, "+"}
 
 	fmt.Println("Hello", t)
 
