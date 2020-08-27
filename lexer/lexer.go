@@ -14,6 +14,7 @@ type Lexer struct {
 	input string
 	ch byte
 	pos int
+	prev int
 }
 
 func (lex *Lexer) eof() bool {
@@ -26,12 +27,21 @@ func (lex *Lexer) readCh() {
 		return
 	}
 	lex.ch = lex.input[lex.pos]
+	lex.prev = lex.pos
 	lex.pos += 1	
+}
+
+func (lex *Lexer) passWhitespaces() {
+	if ' ' == lex.ch || '\n' == lex.ch || '\t' == lex.ch || '\r' == lex.ch {
+		lex.readCh()
+	}
 }
 
 func (lex *Lexer) NextToken() (*token.Token) {
 	tok := &token.Token{token.ILLEGAL, "ILLEGAL"}
 	
+	lex.passWhitespaces()
+
 	s := string(lex.ch)
 	
 	switch lex.ch {
@@ -73,7 +83,56 @@ func (lex *Lexer) NextToken() (*token.Token) {
 		break
 	}
 
+	if lex.isLetter() {
+		id := lex.readIdent()
+		tt := lex.lookupIdent(id)  
+		return &token.Token{tt, id}
+	}
+
+	if lex.isDigit() {
+		d := lex.readDigit()
+		return &token.Token{token.INT, d}
+	}
+
 	lex.readCh()
 	
 	return tok
+}
+
+func (lex *Lexer) isLetter() bool {
+	return ('a' <= lex.ch && lex.ch <= 'z' || 
+		    'A' <= lex.ch && lex.ch <= 'Z' ||
+		    '_' == lex.ch)
+}
+
+func (lex *Lexer) readIdent() string {
+	start := lex.prev
+	for lex.isLetter() {
+		lex.readCh()
+	}
+	end := lex.prev
+	return lex.input[start:end]
+}
+
+func (lex *Lexer) lookupIdent(literal string) token.TokenType {
+	switch literal {
+	case "let":
+		return token.LET
+	case "fn":
+		return token.FUNCTION
+	}
+	return token.IDENT
+}
+
+func (lex *Lexer) isDigit() bool {
+	return ('0' <= lex.ch && lex.ch <= '9')
+}
+
+func (lex *Lexer) readDigit() string {
+	start := lex.prev
+	for lex.isDigit() {
+		lex.readCh()
+	}
+	end := lex.prev
+	return lex.input[start:end]
 }
