@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	// "fmt"
+
 	"github.com/khardi/gomonkey/token"
 )
 
@@ -31,8 +33,8 @@ func (lex *Lexer) readCh() {
 	lex.pos += 1	
 }
 
-func (lex *Lexer) passWhitespaces() {
-	if ' ' == lex.ch || '\n' == lex.ch || '\t' == lex.ch || '\r' == lex.ch {
+func (lex *Lexer) scrollWhitespace() {
+	for ;(' ' == lex.ch || '\n' == lex.ch || '\t' == lex.ch || '\r' == lex.ch); {
 		lex.readCh()
 	}
 }
@@ -40,7 +42,7 @@ func (lex *Lexer) passWhitespaces() {
 func (lex *Lexer) NextToken() (*token.Token) {
 	tok := &token.Token{token.ILLEGAL, "ILLEGAL"}
 	
-	lex.passWhitespaces()
+	lex.scrollWhitespace()
 
 	s := string(lex.ch)
 	
@@ -105,7 +107,7 @@ func (lex *Lexer) NextToken() (*token.Token) {
 
 	if lex.isLetter() {
 		id := lex.readIdent()
-		tt := lex.lookupIdent(id)  
+		tt := lex.lookupIdent(id)
 		return &token.Token{tt, id}
 	}
 
@@ -136,11 +138,29 @@ func (lex *Lexer) readIdent() string {
 
 func (lex *Lexer) lookupIdent(literal string) token.TokenType {
 	switch literal {
+
 	case "let":
 		return token.LET
+
 	case "fn":
 		return token.FUNCTION
+
+	case "if":
+		return token.IF
+
+	case "else":
+		return token.ELSE
+
+	case "return":
+		return token.RETURN
+
+	case "true":
+		return token.TRUE
+
+	case "false":
+		return token.FALSE
 	}
+
 	return token.IDENT
 }
 

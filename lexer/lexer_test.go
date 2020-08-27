@@ -94,3 +94,45 @@ func Test_NextToken_Fn(t *testing.T) {
 		}
 	}
 }
+
+func Test_NextToken_If_Else_Return_True_False(t *testing.T) {
+	wants := []*token.Token{
+		{token.IF, "if"},
+		{token.LPAREN, "("},
+		{token.INT, "5"},
+		{token.LT, "<"},
+		{token.INT, "10"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.TRUE, "true"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.ELSE, "else"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.FALSE, "false"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.EOF,   ""},
+	}
+
+	lex := New(
+		"    if (5 < 10) {       " +
+		"        return true;    " +
+		"    } else {            " +
+		"        return false;   " +
+		"    }                   ",
+	)
+
+	for i, want := range wants {
+		got := lex.NextToken()
+
+		if want.Type != got.Type {
+			t.Fatalf("\nType\ni:%v\nwant:%v\ngot:%v\n", i, want, got)
+		}
+		if want.Literal != got.Literal {
+			t.Fatalf("\nLiteral\ni:%v\nwant:%v\ngot:%v\n", i, want, got)
+		}
+	}
+}
