@@ -173,25 +173,16 @@ func Test_Token_ASSIGN(t *testing.T) {
 	}
 }
 
-// func Test_Token_ASSIGN_scrollWhitespace(t *testing.T) {
-// 	want := token.NewAssign()
-// 	lex := NewFromString(" =")
-	
-// 	// lex.scrollWhitespace()
+func Test_Token_ASSIGN_scrollWhitespace(t *testing.T) {
+	want := token.NewAssign()
+	lex := NewFromString("  \t  \n     =   ")
 
-// 	// lex.read()
-// 	// t.Errorf("%q\n", lex.literal())
+	got := lex.Token()
 
-// 	// lex.read()
-// 	// t.Errorf("%q\n", lex.literal())	
-
-// 	got := lex.Token()
-// 	// t.Error("lex.literal() -> ", lex.literal())
-
-// 	if !want.Equal(got) {
-// 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
-// 	}
-// }
+	if !want.Equal(got) {
+		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
+	}
+}
 
 func Test_Token_PLUS(t *testing.T) {
 	want := token.NewPlus()

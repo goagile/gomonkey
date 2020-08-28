@@ -54,8 +54,8 @@ func (lex *Lexer) clearbuf() {
 func (lex *Lexer) Token() *token.Token {
 	// defer lex.clearbuf()
 
-	// lex.scrollWhitespace()
 	lex.readbuf()
+	lex.scrollWhitespace()
 
 	switch lex.ch {
 
