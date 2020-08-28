@@ -10,34 +10,22 @@ func main() {
 
 	var s scanner.Scanner
 
-	line := `
+	code := `
+	
+		let x = 2;
 
-		if ten != 10 {
+		if x > 1 {
 			return true
-		} else if ten == 22 {
+		} else {
 			return false
-		} else if a >= b {
-			return true
 		}
-
+	
 	`
 
-	// line := `let x = 234;`
-
-	s.Init(strings.NewReader(line))
+	s.Init(strings.NewReader(code))
 
 	for tok := s.Scan(); tok != scanner.EOF; tok = s.Scan() {
-
-		if tok == '!' && s.Peek() == '=' {
-			fmt.Println("NOT_EQ")
-
-		} else if tok == '=' && s.Peek() == '=' {
-			fmt.Println("EQ")
-
-		} else if tok == '>' && s.Peek() == '=' {
-			fmt.Println("GTE")
-
-		}
+		fmt.Println(s.TokenText())
 	}
 
 }

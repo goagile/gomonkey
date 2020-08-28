@@ -4,89 +4,106 @@ import (
 	// "fmt"
 	"io"
 	"strings"
+	"text/scanner"
+
 	"github.com/khardi/gomonkey/token"
 )
 
 func NewFromString(s string) *Lexer {
-	lex := &Lexer{
-		r: strings.NewReader(s),
-		buf: make([]byte, 0),
-	}
-	return lex 
+	return New(strings.NewReader(s))
 }
 
 func New(r io.Reader) *Lexer {
-	lex := &Lexer{
-		r: r,
-		buf: make([]byte, 0),
-	}
-	return lex 
+	lex := &Lexer{}
+	lex.scr.Init(r)
+	return lex
 }
 
 type Lexer struct {
-	r io.Reader
-	ch byte
-	buf []byte
-}
-
-func (lex *Lexer) read() {
-	b := make([]byte, 1)
-	if _, err := lex.r.Read(b); err == io.EOF {
-		lex.ch = 0
-		return
-	}
-	lex.ch = b[0]
-}
-
-func (lex *Lexer) readbuf() {
-	lex.read()
-	lex.buf = append(lex.buf, lex.ch)
-}
-
-func (lex *Lexer) literal() string {
-	return string(lex.buf)
-}
-
-func (lex *Lexer) clearbuf() {
-	lex.buf = make([]byte, 0)
+	scr scanner.Scanner
 }
 
 func (lex *Lexer) Token() *token.Token {
-	// defer lex.clearbuf()
 
-	lex.readbuf()
-	lex.scrollWhitespace()
+	tok := lex.scr.Scan()
 
-	switch lex.ch {
+	if tok == scanner.EOF {
+		return token.NewEOF()
+	}
 
-	case '=':
-		lex.readbuf()
-		if lex.literal() == "==" {
-			lex.clearbuf()
-			return token.NewEq()
-		}
+	if tok == '=' && lex.scr.Peek() == '=' {
+		lex.scr.Scan()
+		return token.NewEq()
+	}
+
+	if tok == '=' {
 		return token.NewAssign()
+	}
 
-	case '+':
+	if tok == '+' {
 		return token.NewPlus()
 	}
 
-	return token.NewIllegal(lex.literal())
-}
-
-func (lex *Lexer) scrollWhitespace() {
-	for (' ' == lex.ch || '\n' == lex.ch || '\t' == lex.ch || '\r' == lex.ch) {
-		lex.read()
+	if tok == '-' {
+		return token.NewMinus()
 	}
+
+	if tok == '*' {
+		return token.NewAsterisk()
+	}
+
+	if tok == '/' {
+		return token.NewSlash()
+	}
+
+	if tok == '<' {
+		return token.NewLt()
+	}
+
+	if tok == '>' {
+		return token.NewGt()
+	}
+
+	if tok == '(' {
+		return token.NewLparen()
+	}
+
+	if tok == ')' {
+		return token.NewRparen()
+	}
+
+	if tok == '{' {
+		return token.NewLbrace()
+	}
+
+	if tok == '}' {
+		return token.NewRbrace()
+	}
+
+	if tok == ',' {
+		return token.NewComma()
+	}
+
+	if tok == ';' {
+		return token.NewSemicolon()
+	}
+
+	literal := lex.scr.TokenText()
+
+	if tokentype, ok := reserved[literal]; ok {
+		return token.New(literal, tokentype)
+	}
+
+	return token.NewIdent(literal)
 }
 
 // func (lex *Lexer) NextToken() (*token.Token) {
 // 	tok := &token.Token{token.ILLEGAL, "ILLEGAL"}
-	
+
 // 	lex.scrollWhitespace()
 
 // 	s := string(lex.ch)
-	
+
 // 	switch lex.ch {
 
 // 	case '=':
@@ -158,12 +175,12 @@ func (lex *Lexer) scrollWhitespace() {
 // 	}
 
 // 	lex.readCh()
-	
+
 // 	return tok
 // }
 
 // func (lex *Lexer) isLetter() bool {
-// 	return ('a' <= lex.ch && lex.ch <= 'z' || 
+// 	return ('a' <= lex.ch && lex.ch <= 'z' ||
 // 		    'A' <= lex.ch && lex.ch <= 'Z' ||
 // 		    '_' == lex.ch)
 // }
@@ -191,30 +208,12 @@ func (lex *Lexer) scrollWhitespace() {
 // 	return lex.input[start:end]
 // }
 
-// func (lex *Lexer) lookupIdent(literal string) token.TokenType {
-// 	switch literal {
-
-// 	case "let":
-// 		return token.LET
-
-// 	case "fn":
-// 		return token.FUNCTION
-
-// 	case "if":
-// 		return token.IF
-
-// 	case "else":
-// 		return token.ELSE
-
-// 	case "return":
-// 		return token.RETURN
-
-// 	case "true":
-// 		return token.TRUE
-
-// 	case "false":
-// 		return token.FALSE
-// 	}
-
-// 	return token.IDENT
-// }
+var reserved = map[string]token.TokenType{
+	"let":    token.LET,
+	"fn":     token.FUNCTION,
+	"if":     token.IF,
+	"else":   token.ELSE,
+	"return": token.RETURN,
+	"true":   token.TRUE,
+	"false":  token.FALSE,
+}

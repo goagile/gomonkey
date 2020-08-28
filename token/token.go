@@ -7,22 +7,21 @@ import (
 type TokenType string
 
 const (
-
 	ILLEGAL = "ILLEGAL"
-	EOF = "EOF"
+	EOF     = "EOF"
 
 	IDENT = "IDENT"
-	INT = "INT"
+	INT   = "INT"
 
-	ASSIGN = "ASSIGN"
-	PLUS = "PLUS"
-	MINUS = "-"
+	ASSIGN   = "ASSIGN"
+	PLUS     = "PLUS"
+	MINUS    = "MINUS"
 	ASTERISK = "*"
-	SLASH = "/"
-	LT = "<"
-	GT = ">"
+	SLASH    = "/"
+	LT       = "<"
+	GT       = ">"
 
-	COMMA = ","
+	COMMA     = ","
 	SEMICOLON = ";"
 
 	LPAREN = "("
@@ -31,18 +30,18 @@ const (
 	RBRACE = "}"
 
 	FUNCTION = "FUNCTION"
-	LET = "LET"
-	IF = "IF"
-	ELSE = "ELSE"
-	RETURN = "RETURN"
-	TRUE = "TRUE"
-	FALSE = "FALSE"
+	LET      = "LET"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
 
 	EQ = "EQ"
 )
 
 type Token struct {
-	Literal string
+	Literal   string
 	TokenType TokenType
 }
 
@@ -66,6 +65,50 @@ func NewPlus() *Token {
 	return &Token{Literal: "+", TokenType: PLUS}
 }
 
+func NewMinus() *Token {
+	return &Token{Literal: "-", TokenType: MINUS}
+}
+
+func NewAsterisk() *Token {
+	return &Token{Literal: "*", TokenType: ASTERISK}
+}
+
+func NewSlash() *Token {
+	return &Token{Literal: "/", TokenType: SLASH}
+}
+
+func NewLt() *Token {
+	return &Token{Literal: "<", TokenType: LT}
+}
+
+func NewGt() *Token {
+	return &Token{Literal: ">", TokenType: GT}
+}
+
+func NewLparen() *Token {
+	return &Token{Literal: "(", TokenType: LPAREN}
+}
+
+func NewRparen() *Token {
+	return &Token{Literal: ")", TokenType: RPAREN}
+}
+
+func NewLbrace() *Token {
+	return &Token{Literal: "{", TokenType: LBRACE}
+}
+
+func NewRbrace() *Token {
+	return &Token{Literal: "}", TokenType: RBRACE}
+}
+
+func NewComma() *Token {
+	return &Token{Literal: ",", TokenType: COMMA}
+}
+
+func NewSemicolon() *Token {
+	return &Token{Literal: ";", TokenType: SEMICOLON}
+}
+
 func NewIllegal(literal string) *Token {
 	return &Token{Literal: literal, TokenType: ILLEGAL}
 }
@@ -76,4 +119,16 @@ func NewEq() *Token {
 
 func NewIdent(literal string) *Token {
 	return &Token{Literal: literal, TokenType: IDENT}
+}
+
+func NewEOF() *Token {
+	return &Token{Literal: "EOF", TokenType: EOF}
+}
+
+func NewLet() *Token {
+	return &Token{Literal: "let", TokenType: LET}
+}
+
+func NewFn() *Token {
+	return &Token{Literal: "fn", TokenType: FUNCTION}
 }
