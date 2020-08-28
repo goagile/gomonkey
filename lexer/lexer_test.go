@@ -2,7 +2,7 @@ package lexer
 
 import (
 	"testing"
-	// "strings"
+	"reflect"
 	"github.com/khardi/gomonkey/token"
 )
 
@@ -205,6 +205,47 @@ func Test_Token_EQ(t *testing.T) {
 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
 	}
 }
+
+func Test_Token_EQ_First(t *testing.T) {
+	want := token.NewEq()
+	lex := NewFromString("==+")
+
+	got := lex.Token()
+
+	if !want.Equal(got) {
+		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
+	}
+}
+
+func Test_Token_EQ_Second(t *testing.T) {
+	want := token.NewPlus()
+	lex := NewFromString("==+")
+	lex.Token()
+
+	got := lex.Token()
+
+	if !want.Equal(got) {
+		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
+	}
+}
+
+func Test_Token_EQ_EQ(t *testing.T) {
+	want := []*token.Token{
+		token.NewEq(),
+		token.NewEq(),
+	}
+	lex := NewFromString("==")
+
+	got := []*token.Token{
+		lex.Token(),
+		lex.Token(),
+	}
+
+	if !reflect.DeepEqual(want, got) {
+		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
+	}
+}
+
 
 // func Test_Token_IDENT(t *testing.T) {
 // 	want := token.NewIdent("ten")

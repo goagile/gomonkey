@@ -62,6 +62,7 @@ func (lex *Lexer) Token() *token.Token {
 	case '=':
 		lex.readbuf()
 		if lex.literal() == "==" {
+			lex.clearbuf()
 			return token.NewEq()
 		}
 		return token.NewAssign()
