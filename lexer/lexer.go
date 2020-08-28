@@ -4,7 +4,7 @@ import (
 	// "fmt"
 	"io"
 	"strings"
-	// "github.com/khardi/gomonkey/token"
+	"github.com/khardi/gomonkey/token"
 )
 
 func NewFromString(s string) *Lexer {
@@ -43,35 +43,29 @@ func (lex *Lexer) literal() string {
 	return string(lex.buf)
 }
 
-// func New(r io.Reader) *Lexer {
-// 	lex := &Lexer{r: r}
-// 	lex.readCh()
-// 	return lex 
-// }
+func (lex *Lexer) clearbuf() {
+	lex.buf = make([]byte, 0)
+}
 
-// type Lexer struct {
-// 	r io.Reader
-// 	ch byte
-// 	pos int
-// 	prev int
-// }
+func (lex *Lexer) Token() *token.Token {
+	lex.read()
+	defer lex.clearbuf()
 
-// func (lex *Lexer) readCh() {
-// 	// if lex.pos >= len(lex.input) {
-// 	// 	// fmt.Println("lex.pos >= len(lex.input)", lex.pos >= len(lex.input))
-// 	// 	lex.ch = 0
-// 	// 	return
-// 	// }
-// 	b := make([]byte, 1)
-// 	n, err := io.Read(b)
-// 	if err == io.EOF {
-// 		return
-// 	}
+	switch lex.ch {
 
-// 	lex.ch = b
-// 	// lex.prev = lex.pos
-// 	// lex.pos += 1
-// }
+	case '=':
+		lex.read()
+		if lex.literal() == "==" {
+			return token.NewEq()
+		}
+		return token.NewAssign()
+
+	case '+':
+		return token.NewPlus()
+	}
+
+	return token.NewIllegal(lex.literal())
+}
 
 // func (lex *Lexer) scrollWhitespace() {
 // 	for ;(' ' == lex.ch || '\n' == lex.ch || '\t' == lex.ch || '\r' == lex.ch); {

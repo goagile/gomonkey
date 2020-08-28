@@ -3,7 +3,7 @@ package lexer
 import (
 	"testing"
 	// "strings"
-	// "github.com/khardi/gomonkey/token"
+	"github.com/khardi/gomonkey/token"
 )
 
 //
@@ -99,6 +99,61 @@ func Test_read_literal_0(t *testing.T) {
 
 	if want != got {
 		t.Fatalf("\nwant:%q\ngot:%q\n", want, got)
+	}
+}
+
+//
+// clear buf
+//
+func Test_clearbuf(t *testing.T) {
+	want := "b"
+
+	s := "ab"
+	lex := NewFromString(s)
+	lex.read()
+	lex.clearbuf()
+	lex.read()
+
+	got := lex.literal()
+
+	if want != got {
+		t.Fatalf("\nwant:%q\ngot:%q\n", want, got)
+	}
+}
+
+//
+// NextToken
+//
+func Test_Token_ASSIGN(t *testing.T) {
+	want := token.NewAssign()
+	lex := NewFromString("=")
+	
+	got := lex.Token()
+
+	if !want.Equal(got) {
+		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
+	}
+}
+
+func Test_Token_PLUS(t *testing.T) {
+	want := token.NewPlus()
+	lex := NewFromString("+")
+
+	got := lex.Token()
+
+	if !want.Equal(got) {
+		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
+	}
+}
+
+func Test_Token_EQ(t *testing.T) {
+	want := token.NewEq()
+	lex := NewFromString("==")
+
+	got := lex.Token()
+
+	if !want.Equal(got) {
+		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
 	}
 }
 

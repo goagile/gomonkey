@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+type TokenType string
+
 const (
 
 	ILLEGAL = "ILLEGAL"
@@ -12,8 +14,8 @@ const (
 	IDENT = "IDENT"
 	INT = "INT"
 
-	ASSIGN = "="
-	PLUS = "+"
+	ASSIGN = "ASSIGN"
+	PLUS = "PLUS"
 	MINUS = "-"
 	ASTERISK = "*"
 	SLASH = "/"
@@ -36,15 +38,38 @@ const (
 	TRUE = "TRUE"
 	FALSE = "FALSE"
 
+	EQ = "EQ"
 )
 
-type TokenType string
-
 type Token struct {
-	Type TokenType
 	Literal string
+	TokenType TokenType
 }
 
 func (tok *Token) String() string {
-	return fmt.Sprintf("Token %q %q", tok.Type, tok.Literal)
+	return fmt.Sprintf("Token(%v, %v)", tok.Literal, tok.TokenType)
+}
+
+func New(literal string, tokentype TokenType) *Token {
+	return &Token{Literal: literal, TokenType: tokentype}
+}
+
+func (tok *Token) Equal(other *Token) bool {
+	return tok.Literal == other.Literal && tok.TokenType == other.TokenType
+}
+
+func NewAssign() *Token {
+	return &Token{Literal: "=", TokenType: ASSIGN}
+}
+
+func NewPlus() *Token {
+	return &Token{Literal: "+", TokenType: PLUS}
+}
+
+func NewIllegal(literal string) *Token {
+	return &Token{Literal: literal, TokenType: ILLEGAL}
+}
+
+func NewEq() *Token {
+	return &Token{Literal: "==", TokenType: EQ}
 }
