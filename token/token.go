@@ -73,3 +73,7 @@ func NewIllegal(literal string) *Token {
 func NewEq() *Token {
 	return &Token{Literal: "==", TokenType: EQ}
 }
+
+func NewIdent(literal string) *Token {
+	return &Token{Literal: literal, TokenType: IDENT}
+}

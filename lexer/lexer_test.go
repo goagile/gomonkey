@@ -55,14 +55,14 @@ func Test_read_ch_0(t *testing.T) {
 }
 
 //
-// read literal
+// readbuf literal
 //
-func Test_read_literal_a(t *testing.T) {
+func Test_readbuf_literal_a(t *testing.T) {
 	want := "a"
 
 	s := "ab"
 	lex := NewFromString(s)
-	lex.read()
+	lex.readbuf()
 
 	got := lex.literal()
 
@@ -76,8 +76,8 @@ func Test_read_literal_b(t *testing.T) {
 
 	s := "ab"
 	lex := NewFromString(s)
-	lex.read()
-	lex.read()
+	lex.readbuf()
+	lex.readbuf()
 
 	got := lex.literal()
 
@@ -87,13 +87,13 @@ func Test_read_literal_b(t *testing.T) {
 }
 
 func Test_read_literal_0(t *testing.T) {
-	want := "ab"
+	want := "ab\x00"
 
 	s := "ab"
 	lex := NewFromString(s)
-	lex.read()
-	lex.read()
-	lex.read()
+	lex.readbuf()
+	lex.readbuf()
+	lex.readbuf()
 
 	got := lex.literal()
 
@@ -110,11 +110,49 @@ func Test_clearbuf(t *testing.T) {
 
 	s := "ab"
 	lex := NewFromString(s)
-	lex.read()
+	lex.readbuf()
 	lex.clearbuf()
-	lex.read()
+	lex.readbuf()
 
 	got := lex.literal()
+
+	if want != got {
+		t.Fatalf("\nwant:%q\ngot:%q\n", want, got)
+	}
+}
+
+// 
+// scrollWhitespace
+//
+func Test_scrollWhitespace_a(t *testing.T) {
+	want := "a"
+
+	s := "  \n   a  \t   b   "
+	lex := NewFromString(s)
+
+	lex.read()
+	lex.scrollWhitespace()
+
+	got := string(lex.ch)
+
+	if want != got {
+		t.Fatalf("\nwant:%q\ngot:%q\n", want, got)
+	}
+}
+
+func Test_scrollWhitespace_b(t *testing.T) {
+	want := "b"
+
+	s := "  \n   a  \t   b   "
+	lex := NewFromString(s)
+
+	lex.read()
+	lex.scrollWhitespace()
+	
+	lex.read()
+	lex.scrollWhitespace()
+
+	got := string(lex.ch)
 
 	if want != got {
 		t.Fatalf("\nwant:%q\ngot:%q\n", want, got)
@@ -134,6 +172,26 @@ func Test_Token_ASSIGN(t *testing.T) {
 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
 	}
 }
+
+// func Test_Token_ASSIGN_scrollWhitespace(t *testing.T) {
+// 	want := token.NewAssign()
+// 	lex := NewFromString(" =")
+	
+// 	// lex.scrollWhitespace()
+
+// 	// lex.read()
+// 	// t.Errorf("%q\n", lex.literal())
+
+// 	// lex.read()
+// 	// t.Errorf("%q\n", lex.literal())	
+
+// 	got := lex.Token()
+// 	// t.Error("lex.literal() -> ", lex.literal())
+
+// 	if !want.Equal(got) {
+// 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
+// 	}
+// }
 
 func Test_Token_PLUS(t *testing.T) {
 	want := token.NewPlus()
@@ -156,6 +214,17 @@ func Test_Token_EQ(t *testing.T) {
 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
 	}
 }
+
+// func Test_Token_IDENT(t *testing.T) {
+// 	want := token.NewIdent("ten")
+// 	lex := NewFromString("ten")
+
+// 	got := lex.Token()
+
+// 	if !want.Equal(got) {
+// 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
+// 	}
+// }
 
 // func Test_NextToken(t *testing.T) {
 	

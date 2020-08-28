@@ -36,6 +36,10 @@ func (lex *Lexer) read() {
 		return
 	}
 	lex.ch = b[0]
+}
+
+func (lex *Lexer) readbuf() {
+	lex.read()
 	lex.buf = append(lex.buf, lex.ch)
 }
 
@@ -48,13 +52,15 @@ func (lex *Lexer) clearbuf() {
 }
 
 func (lex *Lexer) Token() *token.Token {
-	lex.read()
-	defer lex.clearbuf()
+	// defer lex.clearbuf()
+
+	// lex.scrollWhitespace()
+	lex.readbuf()
 
 	switch lex.ch {
 
 	case '=':
-		lex.read()
+		lex.readbuf()
 		if lex.literal() == "==" {
 			return token.NewEq()
 		}
@@ -67,11 +73,11 @@ func (lex *Lexer) Token() *token.Token {
 	return token.NewIllegal(lex.literal())
 }
 
-// func (lex *Lexer) scrollWhitespace() {
-// 	for ;(' ' == lex.ch || '\n' == lex.ch || '\t' == lex.ch || '\r' == lex.ch); {
-// 		lex.readCh()
-// 	}
-// }
+func (lex *Lexer) scrollWhitespace() {
+	for (' ' == lex.ch || '\n' == lex.ch || '\t' == lex.ch || '\r' == lex.ch) {
+		lex.read()
+	}
+}
 
 // func (lex *Lexer) NextToken() (*token.Token) {
 // 	tok := &token.Token{token.ILLEGAL, "ILLEGAL"}
