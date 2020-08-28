@@ -40,6 +40,16 @@ const (
 	EQ = "EQ"
 )
 
+var Reserved = map[string]TokenType{
+	"let":    LET,
+	"fn":     FUNCTION,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
+	"true":   TRUE,
+	"false":  FALSE,
+}
+
 type Token struct {
 	Literal   string
 	TokenType TokenType
@@ -121,6 +131,10 @@ func NewIdent(literal string) *Token {
 	return &Token{Literal: literal, TokenType: IDENT}
 }
 
+func NewInt(literal string) *Token {
+	return &Token{Literal: literal, TokenType: INT}
+}
+
 func NewEOF() *Token {
 	return &Token{Literal: "EOF", TokenType: EOF}
 }
@@ -131,4 +145,24 @@ func NewLet() *Token {
 
 func NewFn() *Token {
 	return &Token{Literal: "fn", TokenType: FUNCTION}
+}
+
+func NewIf() *Token {
+	return &Token{Literal: "if", TokenType: IF}
+}
+
+func NewElse() *Token {
+	return &Token{Literal: "else", TokenType: ELSE}
+}
+
+func NewReturn() *Token {
+	return &Token{Literal: "return", TokenType: RETURN}
+}
+
+func NewTrue() *Token {
+	return &Token{Literal: "true", TokenType: TRUE}
+}
+
+func NewFalse() *Token {
+	return &Token{Literal: "false", TokenType: FALSE}
 }

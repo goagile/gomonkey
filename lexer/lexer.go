@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	// "fmt"
 	"io"
 	"strings"
 	"text/scanner"
@@ -90,130 +89,22 @@ func (lex *Lexer) Token() *token.Token {
 
 	literal := lex.scr.TokenText()
 
-	if tokentype, ok := reserved[literal]; ok {
+	if isInt(literal) {
+		return token.NewInt(literal)
+	}
+
+	if tokentype, ok := token.Reserved[literal]; ok {
 		return token.New(literal, tokentype)
 	}
 
 	return token.NewIdent(literal)
 }
 
-// func (lex *Lexer) NextToken() (*token.Token) {
-// 	tok := &token.Token{token.ILLEGAL, "ILLEGAL"}
-
-// 	lex.scrollWhitespace()
-
-// 	s := string(lex.ch)
-
-// 	switch lex.ch {
-
-// 	case '=':
-// 		tok = &token.Token{token.ASSIGN, s}
-// 		break
-
-// 	case '+':
-// 		tok = &token.Token{token.PLUS, s}
-// 		break
-
-// 	case '-':
-// 		tok = &token.Token{token.MINUS, s}
-// 		break
-
-// 	case '*':
-// 		tok = &token.Token{token.ASTERISK, s}
-// 		break
-
-// 	case '/':
-// 		tok = &token.Token{token.SLASH, s}
-// 		break
-
-// 	case '<':
-// 		tok = &token.Token{token.LT, s}
-// 		break
-
-// 	case '>':
-// 		tok = &token.Token{token.GT, s}
-// 		break
-
-// 	case '(':
-// 		tok = &token.Token{token.LPAREN, s}
-// 		break
-
-// 	case ')':
-// 		tok = &token.Token{token.RPAREN, s}
-// 		break
-
-// 	case '{':
-// 		tok = &token.Token{token.LBRACE, s}
-// 		break
-
-// 	case '}':
-// 		tok = &token.Token{token.RBRACE, s}
-// 		break
-
-// 	case ',':
-// 		tok = &token.Token{token.COMMA, s}
-// 		break
-
-// 	case ';':
-// 		tok = &token.Token{token.SEMICOLON, s}
-// 		break
-
-// 	case 0:
-// 		tok = &token.Token{token.EOF, ""}
-// 		break
-// 	}
-
-// 	if lex.isLetter() {
-// 		id := lex.readIdent()
-// 		tt := lex.lookupIdent(id)
-// 		return &token.Token{tt, id}
-// 	}
-
-// 	if lex.isDigit() {
-// 		d := lex.readDigit()
-// 		return &token.Token{token.INT, d}
-// 	}
-
-// 	lex.readCh()
-
-// 	return tok
-// }
-
-// func (lex *Lexer) isLetter() bool {
-// 	return ('a' <= lex.ch && lex.ch <= 'z' ||
-// 		    'A' <= lex.ch && lex.ch <= 'Z' ||
-// 		    '_' == lex.ch)
-// }
-
-// func (lex *Lexer) isDigit() bool {
-// 	return ('0' <= lex.ch && lex.ch <= '9')
-// }
-
-// func (lex *Lexer) readIdent() string {
-// 	start := lex.prev
-// 	for lex.isLetter() {
-// 		lex.readCh()
-// 	}
-// 	end := lex.prev
-// 	return lex.input[start:end]
-// }
-
-// func (lex *Lexer) readDigit() string {
-// 	start := lex.prev
-// 	// fmt.Println("lex.isDigit()", lex.isDigit())
-// 	for lex.isDigit() {
-// 		lex.readCh()
-// 	}
-// 	end := lex.prev
-// 	return lex.input[start:end]
-// }
-
-var reserved = map[string]token.TokenType{
-	"let":    token.LET,
-	"fn":     token.FUNCTION,
-	"if":     token.IF,
-	"else":   token.ELSE,
-	"return": token.RETURN,
-	"true":   token.TRUE,
-	"false":  token.FALSE,
+func isInt(literal string) bool {
+	for _, tok := range literal {
+		if tok < '0' || tok > '9' {
+			return false
+		}
+	}
+	return true
 }
